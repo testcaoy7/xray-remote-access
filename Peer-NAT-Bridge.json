@@ -1,0 +1,60 @@
+{
+    "log": {
+        "loglevel": "info"
+    },
+    "reverse": {
+        "bridges": [
+            {
+                "tag": "bridge",
+                "domain": "r.private.link"
+            }
+        ]
+    },
+    "outbounds": [
+        {
+            "tag": "block",
+			"protocol": "blackhole"
+		},
+        {
+            "tag": "direct",
+            "protocol": "freedom"
+        },
+        {
+            "tag": "tunnel",
+            "protocol": "shadowsocks",
+            "settings": {
+                "servers": [
+                    {
+                      "address": "<Public IP of Portal, I use DDNS domain pointed to my broadband.>",
+                      "port": 1080,
+                      "method": "2022-blake3-aes-128-gcm",
+                      "password": "<use 'openssl rand -base64 16' to generate key>",
+                      "uot": true
+                    }
+                ]
+            }
+        }
+    ],
+    "routing": {
+        "domainStrategy": "IPIfNonMatch",
+        "domainMatcher": "hybrid",
+        "rules": [
+            {
+                "type": "field",
+                "inboundTag": ["dns-module"],
+                "outboundTag": "direct"
+            },
+            {
+                "type": "field",
+                "inboundTag": ["bridge"],
+                "domain": ["full:r.private.link"],
+                "outboundTag": "tunnel"
+            },
+            {
+                "type": "field",
+                "inboundTag": ["bridge"],
+                "outboundTag": "direct"
+            }
+        ]
+    }
+}

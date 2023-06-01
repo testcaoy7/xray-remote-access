@@ -1,0 +1,48 @@
+{
+    "log": {
+        "loglevel": "info"
+    },
+    "reverse": {
+        "portals": [
+            {
+                "tag": "portal",
+                "domain": "r.private.link"
+            }
+        ]
+    },
+    "inbounds": [
+        {
+            "tag": "browser-proxy-in",
+            "listen": "127.0.0.1",
+            "port": 8080,
+            "protocol": "http"
+        },
+        {
+            "tag": "tunnel",
+            "listen": "0.0.0.0",
+            "port": 1080,
+            "protocol": "shadowsocks",
+            "settings": {
+                "method": "2022-blake3-aes-128-gcm",
+                "password": "<use 'openssl rand -base64 16' to generate key>",
+                "network": "tcp"
+            }
+        }
+    ],
+    "routing": {
+        "domainStrategy": "AsIs",
+        "domainMatcher": "hybrid",
+        "rules": [
+            {
+                "type": "field",
+                "inboundTag": ["browser-proxy-in"],
+                "outboundTag": "portal"
+            },
+            {
+                "type": "field",
+                "inboundTag": ["tunnel"],
+                "outboundTag": "portal"
+            }
+        ]
+    }
+}
